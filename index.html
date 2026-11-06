@@ -1302,6 +1302,9 @@
   .contact__send:hover { background: #fff7e3; }
   .contact__send:hover svg { transform: translateX(-4px); }
   .contact__send:focus-visible, .field input:focus-visible, .field textarea:focus-visible { outline: 2px solid #EFE8D6; outline-offset: 3px; }
+  /* תיקון באג ציור בריחוף: על חלק מגדלי החלון הרקע של הכפתור 'דלף' מתחת לכפתור. תוחמים את הציור לתוך הכפתור; טבעת המיקוד עוברת פנימה כדי לא להיחתך */
+  .contact__send { contain: paint; }
+  .contact__send:focus-visible { outline-offset: -5px; outline-color: #792421; }
   .contact__status { position: absolute; left: 0; right: 0; top: calc(190 * var(--s)); margin: 0; text-align: center; font-family: "Alef", sans-serif; font-size: calc((max(13px, calc(16 * var(--s)))) * var(--ft, 1)); min-height: 1em; }
 
   /* קו אנכי מפריד עם "תפסים" בקצוות */
@@ -1789,13 +1792,14 @@
   }
 
   @media (max-width: 860px), (max-aspect-ratio: 1/1) {
-    .diff .bd-head { margin-bottom: min(104px, 11.6svh); }
+    .diff { --gap: min(104px, 11.6svh); }
+    .diff .bd-head { margin-bottom: var(--gap); }
     .diff .bd-card { width: 84%; margin: 0 auto;
       -webkit-mask: radial-gradient(circle at 50% 0, transparent 31px, #000 32px); mask: radial-gradient(circle at 50% 0, transparent 31px, #000 32px); }
     .diff .bd-slide { padding: min(74px, 7.4svh) 20px min(26px, 2.4svh); }
     .diff .bd-photo { grid-area: 2 / 1; justify-self: center; align-self: start; width: 60%; height: 150px; margin: -44px 0 0 0;
       transform: translateY(12px); transition: transform .9s cubic-bezier(.45, 0, .2, 1); }
-    .diff .bd-photo.pop { transform: translateY(-52px); }
+    .diff .bd-photo.pop { transform: translateY(calc(-1 * max(8px, min(52px, var(--gap) - 50px)))); }
     .diff .bd-photo__in { top: 7px; right: 7px; left: 7px; bottom: 0; }
     .diff .bd-pimg { background-position: 50% 38%; }
     .diff__layer[data-i="2"] .diff__bgimg { background-position: 46% 38%; }
@@ -2124,6 +2128,26 @@
   /* הדף עצמו לא נגלל אף פעם (גם לא באייפון/סאפרי) - רק העמודים באתר זזים */
   html { overflow: hidden; overscroll-behavior: none; }
   body { position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; }
+
+  /* ===== תיקוני מובייל לפי טלפון אמיתי (360×613 עם סרגלי הדפדפן) ===== */
+  @media (max-width: 860px), (max-aspect-ratio: 1/1) {
+    /* היינות: הכותרת לעולם לא נכנסת מתחת להדר */
+    #wines { --tt: max(calc(92 * var(--u)), 84px); }
+    .wm__title { top: var(--tt); }
+    .wm__rule { top: calc(var(--tt) + 100 * var(--u)); }
+    .wm__track { top: calc(var(--tt) + 158 * var(--u)); height: calc(544 * var(--u) - var(--tt)); }
+    /* הסיפור שלנו: ההמבורגר נשאר קריא מעל פני הזוג */
+    .story .menu-btn { background: rgba(239, 232, 214, .94); border-radius: 50%; box-shadow: 0 0 0 7px rgba(239, 232, 214, .94); }
+    /* דברו איתנו: פרטי הקשר צמודים זה לזה ויושבים למטה; שתי שורות התחתית ממורכזות ומסודרות */
+    .contact__info { height: auto; justify-content: flex-end; gap: 12px; }
+    .contact__legal { left: 52px; right: 52px; justify-content: center; text-align: center; gap: 0; align-items: baseline; }
+    .contact__legal .lgl__warn { flex: 0 0 100%; order: 0; text-align: center; margin-bottom: 4px; font-size: calc(10.6px * var(--ft, 1)); }
+    .contact__legal a { order: 1; font-size: calc(11px * var(--ft, 1)); padding: 3px 0; }
+    .contact__legal .lgl__c { order: 2; font-size: calc(11px * var(--ft, 1)); }
+    .contact__legal a + a::before, .contact__legal .lgl__c::before { content: "·"; display: inline-block; margin: 0 7px; opacity: .6; }
+    .contact__legal .lgl__c::before { margin-inline: 7px; }
+  }
+  @media (max-width: 399px) { .contact__legal .lgl__c { display: none; } }   /* בטלפון צר: שתי שורות מסודרות, בלי שורת זכויות יוצרים שנשברת */
 </style>
 </head>
 <body data-page="reservation">
