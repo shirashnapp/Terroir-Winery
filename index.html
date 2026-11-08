@@ -107,10 +107,10 @@
   /* ===== Header ===== */
   .header {
     position: absolute;
-    top: 69px;
+    top: calc(57 * var(--s, min(calc(100vw / 1440), calc(100vh / 850))));             /* ההדר גדל ומתכווץ יחד עם העיצוב – כך הכותרות שומרות על אותו מרחק ממנו בכל מחשב (עם ברירת מחדל לעמודים בלי --s) */
     left: 70px;   /* ממורכז: אותו מרווח מימין ומשמאל */
     right: 70px;
-    height: 52px;
+    height: calc(52 * var(--s, min(calc(100vw / 1440), calc(100vh / 850)))); min-height: 36px;
     border: var(--line);
     display: flex;
     align-items: center;
@@ -120,7 +120,7 @@
   }
 
   .header__logo { display: block; line-height: 0; }
-  .header__logo img { width: 50px; height: auto; display: block; }
+  .header__logo img { width: clamp(40px, calc(50 * var(--s, min(calc(100vw / 1440), calc(100vh / 850)))), 58px); height: auto; display: block; }
 
   .menu-btn {
     width: 34px;
@@ -361,7 +361,7 @@
     --menu-ink: #57553E;
     --menu-line: rgba(87, 85, 62, .42);
     position: fixed;
-    top: 69px;
+    top: calc(57 * min(100vw / 1440, 100vh / 850));   /* כמו ההדר (התפריט מחוץ לעמודים, ולכן מחושב כאן ישירות) */
     right: 27px;
     bottom: 32px;
     width: 369px;
@@ -749,7 +749,7 @@
     top: calc((100% - 850 * var(--s)) / 2);
     width: calc(1440 * var(--s)); height: calc(850 * var(--s));
     /* ראש הכרטיס: מתחת להדר (שנגמר ב-121px) – בכל גודל מסך */
-    --ct: max(calc(125 * var(--s)), calc(131px - (100vh - 850 * var(--s)) / 2));
+    --ct: max(calc(125 * var(--s)), calc(109 * var(--s) + 10px - (100vh - 850 * var(--s)) / 2));
     z-index: 3;
   }
   /* התמונות המקוריות של שלוש הכרטיסיות (מוגדרות פעם אחת; משמשות גם לרקע וגם לתמונה במסגרת) */
@@ -2114,7 +2114,7 @@
   }
 
   /* טלפונים נמוכים מאוד (גובה נראה עד ~620px): "דברו איתנו" מתכווץ כדי שייכנס במסך בלי גלילה */
-  @media (max-width: 860px) and (max-height: 620px), (max-aspect-ratio: 1/1) and (max-height: 620px) {
+  @media (max-width: 860px) and (max-height: 680px), (max-aspect-ratio: 1/1) and (max-height: 680px) {
     .contact__title { font-size: calc(32px * var(--ft, 1)); line-height: 1.1; }
     .contact__stage { padding-top: 10px; padding-bottom: 60px; }
     .contact__form { gap: 5px; margin-top: 8px; }
@@ -2175,7 +2175,7 @@
     .bd-card__sep { height: min(64px, 5.6svh); margin: min(30px, 2.4svh) auto; }
     .moments { --mw: min(70vw, calc(46svh / 1.42)); }
   }
-  @media (max-width: 860px) and (max-height: 620px), (max-aspect-ratio: 1/1) and (max-height: 620px) {
+  @media (max-width: 860px) and (max-height: 680px), (max-aspect-ratio: 1/1) and (max-height: 680px) {
     .contact__title { font-size: calc(28px * var(--ft, 1)); }
     .contact__form { gap: 4px; margin-top: 6px; }
     .contact__form .field input, .contact__form .field textarea { height: 30px; }
@@ -2188,10 +2188,10 @@
   @media (max-width: 860px), (max-aspect-ratio: 1/1) {
     /* דברו איתנו: הכפתור צמוד לשדה ההודעה, ריווח קטן עד המפה והפרטים, וריווח קטן עד שתי השורות התחתונות.
        המקום הפנוי עובר למעלה (בין הסרטון לכותרת) במקום להיפתח באמצע */
-    .contact__stage { grid-template-rows: 1fr auto auto auto auto; padding-bottom: 62px; }      /* 62 = שתי השורות (~32) + 18 מהתחתית + 12 ריווח */
+    .contact__stage { grid-template-rows: 1fr auto auto auto auto; padding-bottom: calc(var(--lgh, 32px) + 18px + 16px + env(safe-area-inset-bottom, 0px)); }   /* גובה השורות התחתונות נמדד בפועל (--lgh) + 18 מהתחתית + 16 ריווח */
     .contact__send { margin-top: 0; }
     .contact__map, .contact__info { grid-row: 5; margin-top: 14px; align-self: end; }
-    .contact__legal { bottom: 18px; }
+    .contact__legal { bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
     .contact__map { align-self: stretch; height: auto; min-height: 92px; }   /* המפה בגובה בלוק הפרטים: מתחילה ונגמרת איתו */
     /* "דברו איתנו" בתחתית הסיפור המלא: בגובה המסך הנראה (כמו בעמוד הבית), בלי רווח ריק למטה בדפדפני טלפון */
     .fs-contact-host > .contact { height: 100svh; min-height: 0; }
@@ -2200,6 +2200,13 @@
   }
 
   .hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  /* הדר שנשאר למעלה בזמן גלילה בתוך עמוד (הסיפור המלא בטלפון): רקע אטום יותר כדי שהטקסט שמתחת לא יבלבל */
+  .header--light.is-pinned { background: rgba(239, 232, 214, .94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: background-color .3s ease; }
+
+  @media (max-width: 860px), (max-aspect-ratio: 1/1) { .header__logo img { width: 50px; } }   /* בטלפון הלוגו נשאר בגודלו המקורי */
 </style>
 </head>
 <body data-page="reservation">
@@ -4231,5 +4238,40 @@
 })();
 </script>
 
+
+<script>
+/* ===== הדר "דביק": נשאר במקומו בראש המסך בזמן מעבר בין עמודים ובגלילה בתוך עמוד (למשל הסיפור המלא).
+   כל עמוד שומר על ההדר שלו (צבעים ולוגו); בזמן מעבר ההדרים מתחלפים בעמעום, בלי לזוז. */
+(() => {
+  const items = [...document.querySelectorAll('header.header')].map(h => ({ h, page: h.closest('section'), last: '' })).filter(it => it.page);
+  const contact = document.getElementById('contact');
+  const legal = contact && contact.querySelector('.contact__legal');
+  const setLegal = () => { if (legal && legal.offsetHeight) contact.style.setProperty('--lgh', legal.offsetHeight + 'px'); };
+  if (legal) { setLegal(); if (window.ResizeObserver) new ResizeObserver(setLegal).observe(legal); window.addEventListener('resize', setLegal); }
+  if (!items.length || !('translate' in document.documentElement.style)) return;
+  const vh = () => window.innerHeight || 1;
+  function tick() {
+    if (!document.hidden) {
+      for (const it of items) {
+        const r = it.page.getBoundingClientRect();
+        if (!r.height) continue;                                        /* עמוד מוסתר */
+        if (it.h.offsetHeight > 110) { if (it.last) { it.h.style.translate = it.h.style.opacity = it.h.style.visibility = it.h.style.pointerEvents = ''; it.last = ''; } continue; }   /* ההדר הגדול של הסיפור המלא במחשב – נשאר בראש הדף */
+        it.h.classList.toggle('is-pinned', it.page.scrollTop > 4 && Math.abs(r.top) < 1);
+        const dy = Math.round(-r.top + it.page.scrollTop);
+        const op = Math.max(0, Math.min(1, 1 - Math.abs(r.top) / (vh() * 0.55)));
+        const key = dy + '|' + op.toFixed(2);
+        if (key === it.last) continue;
+        it.last = key;
+        it.h.style.translate = dy ? '0 ' + dy + 'px' : '';
+        it.h.style.opacity = op >= 0.999 ? '' : op.toFixed(3);
+        it.h.style.visibility = op <= 0.001 ? 'hidden' : '';
+        it.h.style.pointerEvents = op < 0.5 ? 'none' : '';
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
