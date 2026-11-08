@@ -2183,6 +2183,21 @@
     .contact__map, .contact__info { height: 92px; }
     .contact__info { gap: 8px; height: auto; }
   }
+
+  /* ===== סבב 4 ===== */
+  @media (max-width: 860px), (max-aspect-ratio: 1/1) {
+    /* דברו איתנו: הכפתור צמוד לשדה ההודעה, ריווח קטן עד המפה והפרטים, וריווח קטן עד שתי השורות התחתונות.
+       המקום הפנוי עובר למעלה (בין הסרטון לכותרת) במקום להיפתח באמצע */
+    .contact__stage { grid-template-rows: 1fr auto auto auto auto; padding-bottom: 62px; }      /* 62 = שתי השורות (~32) + 18 מהתחתית + 12 ריווח */
+    .contact__send { margin-top: 0; }
+    .contact__map, .contact__info { grid-row: 5; margin-top: 14px; align-self: end; }
+    .contact__legal { bottom: 18px; }
+    .contact__map { align-self: stretch; height: auto; min-height: 92px; }   /* המפה בגובה בלוק הפרטים: מתחילה ונגמרת איתו */
+    /* "דברו איתנו" בתחתית הסיפור המלא: בגובה המסך הנראה (כמו בעמוד הבית), בלי רווח ריק למטה בדפדפני טלפון */
+    .fs-contact-host > .contact { height: 100svh; min-height: 0; }
+    /* הסיפור שלנו: הבורדו משמאל ממשיך עד שהקשת פוגשת את שולי המסך - בלי פס בהיר */
+    .story__bordo { height: max(calc(146 * var(--u)), calc(165 * var(--k))); }
+  }
 </style>
 </head>
 <body data-page="reservation">
