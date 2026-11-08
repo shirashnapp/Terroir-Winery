@@ -2198,6 +2198,8 @@
     /* הסיפור שלנו: הבורדו משמאל ממשיך עד שהקשת פוגשת את שולי המסך - בלי פס בהיר */
     .story__bordo { height: max(calc(146 * var(--u)), calc(165 * var(--k))); }
   }
+
+  .hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 </style>
 </head>
 <body data-page="reservation">
@@ -2673,7 +2675,7 @@
         <h3>4. עוגיות ואחסון מקומי</h3>
         <p>האתר משתמש כיום בעוגיות ובאחסון מקומי הכרחיים בלבד: שמירת הסכמתכם לעוגיות והעדפות הנגישות שבחרתם. האתר אינו משתמש בעוגיות פרסום או מעקב של צד שלישי. אם נוסיף בעתיד כלי סטטיסטיקה, נעדכן מדיניות זו ונבקש את הסכמתכם. ניתן למחוק עוגיות ואחסון מקומי בכל עת דרך הגדרות הדפדפן.</p>
         <h3>5. מסירת מידע לצדדים שלישיים</h3>
-        <p>איננו מוכרים או משכירים מידע אישי. מידע יועבר רק לספקי שירות הנדרשים לתפעול האתר ולטיפול בפניות, כגון אחסון אתרים ודוא"ל, בכפוף לחובת סודיות, או אם נידרש לכך על פי דין או צו שיפוטי.</p>
+        <p>איננו מוכרים או משכירים מידע אישי. מידע יועבר רק לספקי שירות הנדרשים לתפעול האתר ולטיפול בפניות, כגון אחסון אתרים, דוא"ל ושירות הגיליונות של Google שבו מנוהלות ההזמנות, בכפוף לחובת סודיות, או אם נידרש לכך על פי דין או צו שיפוטי.</p>
         <h3>6. אבטחת מידע</h3>
         <p>אנו נוקטים אמצעי אבטחה סבירים להגנה על המידע. עם זאת, אין שיטת העברה או אחסון שמבטיחה אבטחה מוחלטת.</p>
         <h3>7. שמירת מידע</h3>
@@ -2754,6 +2756,7 @@
         <h2 class="resv__title" id="resvTitle"><span class="ln"><span>שמרו מקום</span></span> <span class="ln"><span>ליד השולחן</span></span></h2>
         <div class="tick-rule resv__rule" aria-hidden="true"></div>
         <form id="resvForm" novalidate>
+          <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="resv__sel rv" style="--i:2" id="resvSel">
             <button type="button" class="rs" data-k="date" aria-haspopup="listbox" aria-expanded="false"><svg class="ic" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="3" y="4.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h16M7 2.5v4M15 2.5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><b id="rsDate"></b><small id="rsPlot" class="is-plot"></small><svg class="cv" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button type="button" class="rs" data-k="time" aria-haspopup="listbox" aria-expanded="false"><svg class="ic" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M11 6.5V11l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b id="rsTime"></b><small>שעת הגעה</small><svg class="cv" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -3984,23 +3987,29 @@
   });
   document.querySelector('#flyCta .cta').addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openResv(e.currentTarget); });
 
-  /* ===== שמירה אמיתית של ההזמנה =====
-     1) בתוך claude.ai – נשמרת במסד הנתונים של הדף (ובעל הדף רואה אותה בלוח "הזמנות")
-     2) כשהאתר מועלה לשרת – אפשר להגדיר כאן כתובת שמקבלת את ההזמנות (Formspree, Web3Forms, שרת משלכם)
-     3) אם אף אחד מהם לא זמין – נפתחת טיוטת מייל עם כל הפרטים */
+  /* ===== שמירת ההזמנה – בלי טיוטת מייל =====
+     ההזמנה נשלחת ברקע לגיליון Google פרטי של בעלת האתר (Google Apps Script), או לכל שירות טפסים אחר (Formspree וכד').
+     הגולשים רואים רק את מסך האישור; את רשימת ההזמנות רואה רק בעלת הגיליון.
+     להפעלה: מדביקים כאן את כתובת ה-Web App (נגמרת ב-/exec). כל עוד היא ריקה – מוצג אישור בלבד (מצב תצוגה). */
   const RESV_ENDPOINT = '';
   async function resvSave(rec) {
     const out = { ok: false, how: '' };
     try {
       const db = window.claude && claude.use ? await claude.use('db') : null;
       if (db) { await db.collection('reservations').doc(rec.id).set(rec); out.ok = true; out.how = 'db'; }
-    } catch (err) { /* ממשיכים לדרך הבאה */ }
+    } catch (err) { /* ממשיכים */ }
     if (RESV_ENDPOINT) {
       try {
-        const r = await fetch(RESV_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(rec) });
-        if (r.ok) { out.ok = true; out.how = out.how || 'endpoint'; }
-      } catch (err) { /* ממשיכים */ }
-    }
+        if (/script\.google(usercontent)?\.com/.test(RESV_ENDPOINT)) {
+          const form = new URLSearchParams(Object.entries(rec).map(([k, v]) => [k, String(v ?? '')]));
+          await fetch(RESV_ENDPOINT, { method: 'POST', mode: 'no-cors', body: form });   /* תשובה אטומה: הצלחת רשת = נשלח */
+          out.ok = true; out.how = out.how || 'sheet';
+        } else {
+          const r = await fetch(RESV_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(rec) });
+          if (r.ok) { out.ok = true; out.how = out.how || 'endpoint'; }
+        }
+      } catch (err) { /* שגיאת רשת – מטופל למטה */ }
+    } else if (!out.ok) { out.ok = true; out.how = 'demo'; }
     return out;
   }
   let resvSending = false;
@@ -4020,6 +4029,7 @@
       return;
     }
     resvMsg.textContent = ''; resvClosePanel();
+    const trap = resvForm.querySelector('.hp');
     const d = resvState.date, plot = plotFor(d);
     const when = dateLabel(d) + ' · ' + resvState.time;
     const guests = resvState.guests + (resvState.guests === 1 ? ' אורח' : ' אורחים');
@@ -4028,14 +4038,13 @@
       date: iso(d), dateLabel: dateLabel(d), time: resvState.time, guests: resvState.guests, plot };
     const btn = resvForm.querySelector('.resv__send[type=submit]'), lbl = btn.querySelector('span'), old = lbl.textContent;
     resvSending = true; btn.classList.add('is-busy'); lbl.textContent = 'שולחים…';
-    const res = await resvSave(rec);
+    const res = trap && trap.value ? { ok: true, how: 'trap' } : await resvSave(rec);
     resvSending = false; btn.classList.remove('is-busy'); lbl.textContent = old;
-    const body = ['בקשת הזמנת שולחן – Terroir', '', 'שם: ' + name, 'טלפון: ' + phone, 'מועד: ' + when, 'מספר אורחים: ' + guests, 'החלקה ביום זה: ' + plot, note ? 'בקשה מיוחדת: ' + note : '', 'מספר הזמנה: ' + ref].filter(Boolean).join('\n');
+    if (!res.ok) { resvMsg.textContent = 'לא הצלחנו לשלוח כרגע. נסו שוב בעוד רגע, או התקשרו אלינו: 02-536814'; return; }
     document.getElementById('resvSum').textContent = guests + ' · ' + DAYS[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1) + ' · ' + resvState.time;
     document.getElementById('resvPlotTxt').textContent = 'ביום הזה: ' + plot;
     const refEl = document.getElementById('resvRef');
-    if (res.ok) { refEl.className = 'resv__ref'; refEl.textContent = 'מספר הזמנה ' + ref; }
-    else { refEl.className = 'resv__warn'; refEl.textContent = 'לא הצלחנו לשלוח אוטומטית – נפתחה טיוטת מייל, לחצו "שליחה" כדי להשלים'; }
+    refEl.className = 'resv__ref'; refEl.textContent = 'מספר הזמנה ' + ref;
     const drops = document.getElementById('resvDrops'); drops.innerHTML = '';
     for (let k = 0; k < 14; k++) {
       const a2 = (k / 14) * Math.PI * 2 + Math.random() * .4, r = 90 + Math.random() * 110, i = document.createElement('i');
@@ -4044,7 +4053,6 @@
       drops.appendChild(i);
     }
     resv.classList.add('is-done');
-    if (!res.ok) window.location.href = 'mailto:tr.11@gmail.com?subject=' + encodeURIComponent('הזמנת שולחן – ' + name) + '&body=' + encodeURIComponent(body);
   });
 
   /* ===== לוח הזמנות – רק לבעל הדף ===== */
