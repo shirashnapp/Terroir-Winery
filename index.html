@@ -2148,6 +2148,41 @@
     .contact__legal .lgl__c::before { margin-inline: 7px; }
   }
   @media (max-width: 399px) { .contact__legal .lgl__c { display: none; } }   /* בטלפון צר: שתי שורות מסודרות, בלי שורת זכויות יוצרים שנשברת */
+
+  /* ===== סבב תיקונים 3 (טלפון אמיתי) ===== */
+  @media (max-width: 860px), (max-aspect-ratio: 1/1) {
+    /* הסיפור שלנו: הזוג זז מעט שמאלה כדי שההמבורגר לא ייפול על הגבר */
+    .story__couple { left: calc(372 * var(--k) - 326 * var(--u) * .72); }
+    .story .menu-btn { background: none; box-shadow: none; }
+    /* כותרות העמודים יורדות מעט מתחת להדר */
+    #wines { --tt: max(calc(92 * var(--u)), 94px); }
+    .diff__stage { padding-top: max(94px, min(96px, 11.4svh)); }
+    .moments__stage { padding-top: max(94px, min(104px, 12.4svh)); }
+    /* היינות: השער בפרופורציות של התמונה, כך שכל הבקבוק נראה */
+    #wines { --th: calc(544 * var(--u) - var(--tt)); --sw: min(calc(352 * var(--k)), calc(var(--th) * .78)); }
+    .wm__slide { flex-basis: var(--sw); border-radius: calc(var(--sw) / 2) calc(var(--sw) / 2) 0 0; }
+    .wm__track { padding: 0 calc((100% - var(--sw)) / 2); }
+    /* דברו איתנו: ההדר יושב כולו על אנימציית העלים */
+    .contact { --cv: clamp(100px, calc(100svh - 588px), 250px); }
+    /* שתי השורות התחתונות: צמודות יותר, בריווח יחסי לגודל הטקסט */
+    .contact__legal .lgl__warn { margin-bottom: 0; line-height: 1.45; }
+    .contact__legal a, .contact__legal .lgl__c { padding: 0; line-height: 1.45; }
+  }
+  /* טלפונים נמוכים: מפנים את המקום שהכותרות והסרטון צריכים */
+  @media (max-width: 860px) and (max-height: 680px), (max-aspect-ratio: 1/1) and (max-height: 680px) {
+    .diff { --gap: min(104px, 9.4svh); }
+    .diff .bd-slide { padding-top: min(74px, 6svh); }
+    .bd-card__sep { height: min(64px, 5.6svh); margin: min(30px, 2.4svh) auto; }
+    .moments { --mw: min(70vw, calc(46svh / 1.42)); }
+  }
+  @media (max-width: 860px) and (max-height: 620px), (max-aspect-ratio: 1/1) and (max-height: 620px) {
+    .contact__title { font-size: calc(28px * var(--ft, 1)); }
+    .contact__form { gap: 4px; margin-top: 6px; }
+    .contact__form .field input, .contact__form .field textarea { height: 30px; }
+    .contact__send { height: 36px; }
+    .contact__map, .contact__info { height: 92px; }
+    .contact__info { gap: 8px; height: auto; }
+  }
 </style>
 </head>
 <body data-page="reservation">
